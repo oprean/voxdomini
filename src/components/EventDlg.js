@@ -100,6 +100,12 @@ export default function FullScreenDialog(props) {
 //    console.log(data);
   };
 
+  function handleCloseStart() {
+    values.end = moment(values.start).add( 2, 'hours');
+    setValues(values);
+    validate();
+  }
+
   async function saveData(event) {
     if (event.id) {
         await axios.put(API_ROOT_URL + 'event', event).then(function (response) {
@@ -196,6 +202,7 @@ export default function FullScreenDialog(props) {
                             name="start"
                             label="Start time"
                             value={values.start}
+                            onClose={handleCloseStart}
                             onChange={handleInputChange}
                         /></Grid>
                       <Grid item xs={6}>

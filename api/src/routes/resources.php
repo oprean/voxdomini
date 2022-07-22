@@ -4,7 +4,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->get('/resources', function (Request $request, Response $response, $args) {
   R::useExportCase('camel');
-  $resources = array_values(R::findAll(RESOURCE_BEAN));
+  $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY group_only asc, name asc'));
   $resources = R::exportAll($resources);
   
   $response->getBody()->write(json_encode($resources));

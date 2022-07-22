@@ -80,7 +80,10 @@ const EventCard = (props) => {
             </Typography>    
             <Typography variant="body1" component="div" style={style.center}>
                 <CalendarMonthIcon fontSize="small"/>
-                {moment(event.start).format(DATE_FORMAT)} - {moment(event.end).format(DATE_FORMAT)}
+                {moment(event.start).isSame(event.end, 'day')
+                  ?moment(event.start).format('D MMM YYYY') +' '+ moment(event.start).format('HH:mm') +' - '+ moment(event.end).format('HH:mm')
+                  :moment(event.start).format(DATE_FORMAT) +' - '+ moment(event.end).format(DATE_FORMAT)}
+                
             </Typography>    
             {false && <Typography variant="body1" component="div" style={style.center}>
                 <PeopleIcon fontSize="small"/>       
