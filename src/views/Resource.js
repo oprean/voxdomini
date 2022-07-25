@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -112,7 +113,7 @@ const ResourceAgenda = () => {
       <Typography color="text.primary">{filterHR(filter)}</Typography>
     </Breadcrumbs> }
     {resource.ownEvent && resource.ownEvent.map((event) => {
-      return (<div key={event.id}><EventCard data={event} onClose={fetchData.bind(null, filter)} /><Divider/></div>)
+      return (<div key={event.id}><EventCard data={event} onClose={fetchData.bind(null, filter)} /></div>)
     })}
   
   <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
@@ -130,6 +131,7 @@ const ResourceAgenda = () => {
           <BottomNavigationAction label="This week" value={"week"} style={{backgroundColor:filter=='week'?"#CCC":"#FFF"}} icon={<ArchiveIcon />} />
         </BottomNavigation>
       </Paper>
+      <Box sx={{ flexGrow: 1, height:55 }} />
 </Container> 
 )};
 

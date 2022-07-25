@@ -9,8 +9,9 @@ export default function UserInput(props) {
     const [open, setOpen] = React.useState(false);
     const [user, setUser] = React.useState({});
 
-    console.log(extdata, value);
-
+//    console.log(extdata, value);
+//console.log(options);
+//console.log(value);
     function handleRole(value,e) {
         setOpen(true)
         setUser(value);
@@ -18,8 +19,11 @@ export default function UserInput(props) {
     }
 
     function handleClose(role) {
-        console.log(role);
-        setOpen(false);
+      console.log(user, role, extdata);
+      user.roleId = role.id;
+      setUser(user);
+      console.log(user);
+      setOpen(false);
     }
 
   return (
@@ -30,6 +34,7 @@ export default function UserInput(props) {
         id="user-input"
         options={options}
         filterSelectedOptions
+        isOptionEqualToValue={(option, value) => option.userId === value.userId}
         getOptionLabel={(option) => option.name}
         value={value}
         name={name}

@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Button, CardActionArea, CardActions } from '@mui/material';
+import { Button, Avatar, CardActionArea, CardActions } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
@@ -67,7 +67,7 @@ const EventCard = (props) => {
     const style = {
         center: {display: 'flex',alignItems: 'center',flexWrap: 'wrap'}
     };
-
+console.log(event.sharedUser);
     return (
         <Card style={{marginBottom:10}}>
           <CardActionArea onClick={handleEditEvent}>
@@ -89,7 +89,8 @@ const EventCard = (props) => {
                 <PeopleIcon fontSize="small"/>       
                 {event.sharedUser && event.sharedUser.map((user) => {
                   return (
-                    <Chip key={user.id} label={user.name} size="small" />
+                    <Chip avatar={<Avatar>A{user.role}</Avatar>}
+                    key={user.id} label={user.name} size="small" />
                   )
                 })}
             </Typography>}

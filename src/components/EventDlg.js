@@ -74,8 +74,8 @@ export default function FullScreenDialog(props) {
     } else if (props.data.title) { // duplicate
       console.log('dddd');
       initialFValues.resourceId = state.dialog.data.resourceId
-      initialFValues.start = moment().add( moment().minute() > 30 && 1 , 'hours').minutes( moment().minute() <= 30 ? 30 : 0);//.format(DATE_FORMAT);
-      initialFValues.end = moment().add( moment().minute() > 30 && 2 , 'hours').minutes( moment().minute() <= 30 ? 30 : 0);//.format(DATE_FORMAT);
+      initialFValues.start = moment(props.data.start);
+      initialFValues.end = moment(props.data.end);
       event = initialFValues;
       event.title = props.data.title===null?'':props.data.title + ' [duplicate]';
       event.groupId = props.data.groupId===null?0:props.data.groupId;
@@ -230,7 +230,7 @@ export default function FullScreenDialog(props) {
                         options={data.resources}
                         error={errors.resourceId}
                     />
-                    <Controls.Select
+                    {false && <><Controls.Select
                         name="groupId"
                         label="Group"
                         value={values.groupId}
@@ -245,7 +245,7 @@ export default function FullScreenDialog(props) {
                         onChange={handleInputChange}
                         options={data.types}
                         error={errors.type}
-                    />
+                    /></>}
                     {false && <><Controls.UserInput 
                         name="participants"
                         label="Participants"
@@ -253,8 +253,8 @@ export default function FullScreenDialog(props) {
                         extdata={values.id}
                         options={data.users}
                         onChange={handleMultipleInputChange}
-                    />
-                    <Controls.Checkbox
+                    /></>}
+                    {false && <><Controls.Checkbox
                         name="movable"
                         label="Movable"
                         value={values.movable}

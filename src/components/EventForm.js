@@ -178,7 +178,7 @@ const handleSubmit = e => {
                         options={data.resources}
                         error={errors.resourceId}
                     />
-                    <Controls.Select
+                    {false && <><Controls.Select
                         name="groupId"
                         label="Group"
                         value={values.groupId}
@@ -193,7 +193,7 @@ const handleSubmit = e => {
                         onChange={handleInputChange}
                         options={data.types}
                         error={errors.type}
-                    />
+                    /></>}
                     {false && <><Controls.UserInput 
                         name="participants"
                         label="Participants"
@@ -201,8 +201,8 @@ const handleSubmit = e => {
                         extdata={values.id}
                         options={data.users}
                         onChange={handleMultipleInputChange}
-                    />
-                    <Controls.Checkbox
+                    /> </>}
+                    {false && <><Controls.Checkbox
                         name="movable"
                         label="Movable"
                         value={values.movable}

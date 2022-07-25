@@ -26,7 +26,8 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
         $cond = "start < DATE('now')";
         break;
     case 'week':
-        $cond = "DATE(start) BETWEEN DATE('now', 'weekday 0', '-7 days') AND DATE('now', 'weekday 1', '-1 days')";
+        //$cond = "DATE(start) BETWEEN DATE('now', 'weekday 0', '-7 days') AND DATE('now', 'weekday 1', '-1 days')";
+        $cond = "DATE(start) BETWEEN strftime('%Y-%m-%d', 'now', 'localtime', 'weekday 0', '-6 days') AND strftime('%Y-%m-%d', 'now', 'localtime', 'weekday 0')";
         break;
     case 'all':
         $cond = "start >= DATE('now')";
@@ -42,7 +43,27 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
   $cond .= ' ORDER BY start ASC';
 
   $resource->withCondition($cond)->ownEvent;
+  /*if (is_array($resource->ownEvent)) {
+    foreach($resource->ownEvent as $i => $ev) {
+      if (is_array($resource->ownEvent[$i]->ownEventUser)) {
+        foreach($resource->ownEvent[$i]->ownEventUser as $j => $eu) {
+          $resource->ownEvent[$i]->ownEventUser[$j]->setName('ccc');
+          $resource->ownEvent[$i]->ownEventUser[$j]->setRole('rrr');
+          //$resource->ownEvent[$i]->ownEventUser[$j]->name = 'ccc';
+          //echo $resource->ownEvent[$i]->ownEventUser[$j]->name = 'dddd';
+          //echo $resource->ownEvent[$i]->ownEventUser[$j]->getName();
+          $user = $resource->ownEvent[$i]->ownEventUser[$j];
+          //print_r($user);die;
+          $user->name = 'cucu';
+          //$user->role = 'bubu';
+          $resource->ownEvent[$i] ->d = 10000;
+          $resource->ownEvent[$i]->participants[] = $user;
 
+        }
+      }
+    }  
+  }*/
+  
 
   $resource = R::exportAll($resource);
   if (count($resource)) {
