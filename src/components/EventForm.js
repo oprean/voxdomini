@@ -36,7 +36,7 @@ let initialFValues = {
 
 export default function FullScreenDialog(props) {
   const [open, setOpen] = React.useState(props.open);
-  const [data, setData] = React.useState({resources:[{id:0, title:''}], groups:[{id:0, title:''}], types:[{id:0, title:''}]});
+  const [data, setData] = React.useState({resources:[{id:0, title:''}], groups:[{id:0, title:''}], types:[{id:0, title:''}], users:[{name:''}]});
 
   function handleClose() {
     props.closeHandler();
@@ -57,7 +57,8 @@ export default function FullScreenDialog(props) {
     setData({
       resources:response.data.resources.map(res => { res.title=res.name; return res}), 
       groups:response.data.groups.map(res => { res.title=res.name; return res}), 
-      types:response.data.types.map(res => { res.title=res.name; return res})
+      types:response.data.types.map(res => { res.title=res.name; return res}),
+      users:response.data.users
     })
 
     //console.log(data);
@@ -194,14 +195,17 @@ const handleSubmit = e => {
                         options={data.types}
                         error={errors.type}
                     /></>}
-                    {false && <><Controls.UserInput 
+                    {true && <><Controls.UserInput 
                         name="participants"
                         label="Participants"
                         value={values.participants}
                         extdata={values.id}
                         options={data.users}
+                        values={values}
+                        setval={setValues}
                         onChange={handleMultipleInputChange}
-                    /> </>}
+                    /></>}
+                    
                     {false && <><Controls.Checkbox
                         name="movable"
                         label="Movable"

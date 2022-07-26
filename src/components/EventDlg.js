@@ -58,7 +58,7 @@ export default function FullScreenDialog(props) {
     let event = {};
     let response = {};
     response = await axios.get(API_ROOT_URL + 'event/' + props.data.id);
-    console.log(event);
+    //console.log(event);
     if (props.data.id) { // edit
         event = response.data.event;
         event = response.data.event;
@@ -246,12 +246,14 @@ export default function FullScreenDialog(props) {
                         options={data.types}
                         error={errors.type}
                     /></>}
-                    {false && <><Controls.UserInput 
+                    {true && <><Controls.UserInput 
                         name="participants"
                         label="Participants"
                         value={values.participants}
                         extdata={values.id}
                         options={data.users}
+                        values={values}
+                        setval={setValues}
                         onChange={handleMultipleInputChange}
                     /></>}
                     {false && <><Controls.Checkbox

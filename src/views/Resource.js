@@ -115,7 +115,7 @@ const ResourceAgenda = () => {
     {resource.ownEvent && resource.ownEvent.map((event) => {
       return (<div key={event.id}><EventCard data={event} onClose={fetchData.bind(null, filter)} /></div>)
     })}
-  
+  <Box sx={{ flexGrow: 1, height:55 }} />
   <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
         <BottomNavigation
           showLabels
@@ -131,7 +131,7 @@ const ResourceAgenda = () => {
           <BottomNavigationAction label="This week" value={"week"} style={{backgroundColor:filter=='week'?"#CCC":"#FFF"}} icon={<ArchiveIcon />} />
         </BottomNavigation>
       </Paper>
-      <Box sx={{ flexGrow: 1, height:55 }} />
+
 </Container> 
 )};
 

@@ -42,7 +42,7 @@ export default function ResourceCard(props) {
 }
 
   return (
-    <Card>
+    <Card style={{marginBottom:10}}>
       <CardActionArea onClick={handleClick}>
         <CardMedia
           component="img"

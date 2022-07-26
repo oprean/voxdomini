@@ -95,10 +95,10 @@ $app->post('/event', function (Request $request, Response $response, $args) {
     $ids = implode(',',array_map(function ($u) { $u = (object)$u; return $u->userId; }, $body->participants));
     $users = R::findAll(USER_BEAN, 'id in (?)', [$ids]);
     $event->sharedUserList = $users;
-    updateEventUsersRole($body->participants);
   }
 
   $id = R::store( $event );
+  updateEventUsersRole($body->participants, $id);
 
   $response->getBody()->write($event->id);
 
@@ -127,18 +127,17 @@ $app->put('/event', function (Request $request, Response $response, $args) {
     $userIDs = join(',',array_map(function ($u) { return $u->userId; }, $body->participants));
     $users = R::findAll(USER_BEAN, 'id in ('.$userIDs.')');
     $event->sharedUserList = $users;
-    updateEventUsersRole($body->participants);
   }
   $id = R::store( $event );
-
+  updateEventUsersRole($body->participants, $id);
   $response->getBody()->write('ok');
 
   return $response->withHeader('Content-Type', 'application/json');
 });
 
-function updateEventUsersRole($users) {
+function updateEventUsersRole($users, $eventId) {
   foreach($users as $user) {
-    R::exec('UPDATE event_user SET role_id = ? WHERE event_id = ? and user_id = ?',[$user->roleId, $user->eventId, $user->userId]);
+    R::exec('UPDATE event_user SET role_id = ? WHERE event_id = ? and user_id = ?',[$user->roleId, $eventId, $user->userId]);
   }
 }
 

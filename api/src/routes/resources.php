@@ -2,12 +2,24 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-$app->get('/resources', function (Request $request, Response $response, $args) {
+$app->get('/resources[/{filter}]', function (Request $request, Response $response, $args) {
   R::useExportCase('camel');
-  $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY group_only asc, name asc'));
+  $filter = $request->getAttribute('filter');
+  if (empty($filter)) {
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY group_only asc, name asc'));
+  } else {
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND parent_id = ? ORDER BY group_only asc, name asc', [$filter]));
+  }
   $resources = R::exportAll($resources);
+  $groups = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 1 ORDER BY name asc'));
+
+  $data = [
+    'resources' => $resources,
+    'groups' => $groups
+  ];
   
-  $response->getBody()->write(json_encode($resources));
+  $response->getBody()->write(json_encode($data));
+
   return $response->withHeader('Content-Type', 'application/json');
 });
 
@@ -43,39 +55,37 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
   $cond .= ' ORDER BY start ASC';
 
   $resource->withCondition($cond)->ownEvent;
-  /*if (is_array($resource->ownEvent)) {
-    foreach($resource->ownEvent as $i => $ev) {
-      if (is_array($resource->ownEvent[$i]->ownEventUser)) {
-        foreach($resource->ownEvent[$i]->ownEventUser as $j => $eu) {
-          $resource->ownEvent[$i]->ownEventUser[$j]->setName('ccc');
-          $resource->ownEvent[$i]->ownEventUser[$j]->setRole('rrr');
-          //$resource->ownEvent[$i]->ownEventUser[$j]->name = 'ccc';
-          //echo $resource->ownEvent[$i]->ownEventUser[$j]->name = 'dddd';
-          //echo $resource->ownEvent[$i]->ownEventUser[$j]->getName();
-          $user = $resource->ownEvent[$i]->ownEventUser[$j];
-          //print_r($user);die;
-          $user->name = 'cucu';
-          //$user->role = 'bubu';
-          $resource->ownEvent[$i] ->d = 10000;
-          $resource->ownEvent[$i]->participants[] = $user;
-
-        }
-      }
-    }  
-  }*/
-  
 
   $resource = R::exportAll($resource);
   if (count($resource)) {
-    $resource = [
+    $data = [
       'resource' => $resource[0],
-      'resources' => $resources
+      'resources' => $resources,
     ];
   }
-  $response->getBody()->write(json_encode($resource));
+
+  if (is_array($data['resource']['ownEvent'])) {
+    foreach($data['resource']['ownEvent'] as $i => $ev) {
+      if (array_key_exists('ownEventUser', $data['resource']['ownEvent'][$i])) {
+        foreach($data['resource']['ownEvent'][$i]['ownEventUser'] as $j => $eu) {
+          $data['resource']['ownEvent'][$i]['ownEventUser'][$j] = 
+            decorateEventUser($data['resource']['ownEvent'][$i]['ownEventUser'][$j]);
+        }
+      }
+    }  
+  }
+
+  $response->getBody()->write(json_encode($data));
 
   return $response->withHeader('Content-Type', 'application/json');
 });
+
+function decorateEventUser($aEventUser) {
+  $o = (object)$aEventUser;
+  $o->name = R::getCell('SELECT name FROM user WHERE id = ?', [$o->userId]);
+  $o->role = R::getCell('SELECT name FROM role WHERE id = ?', [$o->roleId]);
+  return $o;
+}
 
 $app->put('/resource', function (Request $request, Response $response, $args) {
   $body = $request->getBody()->getContents();

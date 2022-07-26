@@ -67,7 +67,7 @@ const EventCard = (props) => {
     const style = {
         center: {display: 'flex',alignItems: 'center',flexWrap: 'wrap'}
     };
-console.log(event.sharedUser);
+//console.log(event.sharedUser);
     return (
         <Card style={{marginBottom:10}}>
           <CardActionArea onClick={handleEditEvent}>
@@ -85,11 +85,11 @@ console.log(event.sharedUser);
                   :moment(event.start).format(DATE_FORMAT) +' - '+ moment(event.end).format(DATE_FORMAT)}
                 
             </Typography>    
-            {false && <Typography variant="body1" component="div" style={style.center}>
+            {true && <Typography variant="body1" component="div" style={style.center}>
                 <PeopleIcon fontSize="small"/>       
-                {event.sharedUser && event.sharedUser.map((user) => {
+                {event.ownEventUser && event.ownEventUser.map((user) => {
                   return (
-                    <Chip avatar={<Avatar>A{user.role}</Avatar>}
+                    <Chip avatar={<Avatar>{user.role?user.role[0].toUpperCase():''}</Avatar>}
                     key={user.id} label={user.name} size="small" />
                   )
                 })}

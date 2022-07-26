@@ -1,10 +1,11 @@
 <?php
 class Model_EventUser extends RedBean_SimpleModel {
-    private $_name;
+    public $name;
     private $_role;
     public function open() {
-        //echo $this->id.' || ';
-       $this->_name = 'ddd';
+        //echo $this->name.' || ';
+       //$this->_name = 'ddd';
+       $this->name = 'ddd';
     }
 
     public function __set($key, $val) {
