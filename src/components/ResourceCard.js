@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Button, CardActionArea, CardActions } from '@mui/material';
+import moment from 'moment';
 import {useStateValue} from '../utils/state';
 import { Link, useHistory } from "react-router-dom";
 import {PERMISSIONS} from '../utils/permissions';
@@ -25,6 +26,18 @@ export default function ResourceCard(props) {
   function handleClick(event) {
     event.preventDefault();
     history.push(`/resource/${resource.id}`);
+  }
+
+  function getEventCnt() {
+    let cnt = 0;
+    var today = moment();
+    if (Array.isArray(resource.ownEvent)) {
+      resource.ownEvent.map(event => {
+        if (moment(event.start).isAfter(today)) cnt++;
+      })
+    }
+
+    return cnt;
   }
 
   function handleEditResource() {
@@ -56,7 +69,7 @@ export default function ResourceCard(props) {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {resource.description} 
-            ({Array.isArray(resource.ownEvent)?resource.ownEvent.length:0}) event/s
+            ({getEventCnt()}) event/s
           </Typography>
         </CardContent>
       </CardActionArea>

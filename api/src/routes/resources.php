@@ -5,10 +5,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 $app->get('/resources[/{filter}]', function (Request $request, Response $response, $args) {
   R::useExportCase('camel');
   $filter = $request->getAttribute('filter');
+  $order = "ifnull((select min(start) from ".EVENT_BEAN." where resource_id = ".RESOURCE_BEAN.".id and start > date('now')),date('now', '+100 year')) asc, name asc";
   if (empty($filter)) {
-    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY group_only asc, name asc'));
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY '.$order));
   } else {
-    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND parent_id = ? ORDER BY group_only asc, name asc', [$filter]));
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND parent_id = ? ORDER BY '.$order, [$filter]));
   }
   $resources = R::exportAll($resources);
   $groups = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 1 ORDER BY name asc'));

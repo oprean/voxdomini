@@ -85,7 +85,7 @@ const EventCard = (props) => {
                   :moment(event.start).format(DATE_FORMAT) +' - '+ moment(event.end).format(DATE_FORMAT)}
                 
             </Typography>    
-            {true && <Typography variant="body1" component="div" style={style.center}>
+            {event.ownEventUser && event.ownEventUser.length > 0 && <Typography variant="body1" component="div" style={style.center}>
                 <PeopleIcon fontSize="small"/>       
                 {event.ownEventUser && event.ownEventUser.map((user) => {
                   return (
