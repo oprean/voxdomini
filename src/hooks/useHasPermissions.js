@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export const useHasPermissions = (permissionNames) => {
   const {user} = useAuth0();
+  if (user === undefined) return false;
   const permissions = user['https://auth0.api.users.bitalb.ro/permissions'];
   
   if (!permissions) {

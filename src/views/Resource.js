@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import {QRCodeSVG, QRCodeCanvas} from 'qrcode.react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
@@ -12,6 +13,7 @@ import {API_ROOT_URL} from '../utils/constants'
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import EventCard from '../components/EventCard';
+import QRCard from "../components/QRCard";
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -23,13 +25,26 @@ import CardMedia from '@mui/material/CardMedia';
 import { CardActionArea, CardActions } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import {useStateValue} from '../utils/state';
+import {PERMISSIONS} from '../utils/permissions';
+import { useHasPermissions } from "../hooks/useHasPermissions";
 
 const ResourceAgenda = () => { 
   const [state, dispatch ] = useStateValue();
   const [resource, setResource] = React.useState([]);
   const [filter, setFilter] = React.useState("all");
+  const [toggleQR, setToggleQR] = React.useState(false);
+
   let { id } = useParams();
   let history = useHistory();
+  const qrcode = {
+    url:"https://voxdomini.bitalb.ro/resource/" + id,
+    text: resource.name
+}
+  const canCreate = useHasPermissions([PERMISSIONS.CREATE_EVENTS])
+  const canEdit = useHasPermissions([PERMISSIONS.EDIT_RESOURCES])
+  const canDelete = useHasPermissions([PERMISSIONS.DELETE_RESOURCES])
+  const canView = useHasPermissions([PERMISSIONS.READ_EVENTS])
+  const canQR = useHasPermissions([PERMISSIONS.CREATE_QR])
 
   useEffect(() => {
     fetchData(filter);
@@ -81,6 +96,10 @@ const ResourceAgenda = () => {
     fetchData(filter);
   }
 
+  function handleToggleQR() {
+    setToggleQR(!toggleQR)
+  }
+
   return (
 <Container maxWidth="xxl">
      <Card>
@@ -101,7 +120,8 @@ const ResourceAgenda = () => {
         </CardContent>
       </CardActionArea>
       <CardActions style={{float:'right'}}>
-        <Button onClick={handleAddEvent} variant="text">Add event</Button>
+      {canQR && <Button onClick={handleToggleQR} variant="text">QR</Button>}        
+      {canCreate && <Button onClick={handleAddEvent} variant="text">Add event</Button>}
       </CardActions>
     </Card>
 <br/>
@@ -112,11 +132,14 @@ const ResourceAgenda = () => {
       <Typography color="text.primary">{resource.name}</Typography>
       <Typography color="text.primary">{filterHR(filter)}</Typography>
     </Breadcrumbs> }
+
+    {canQR && toggleQR && <QRCard content={qrcode}/>}
+
     {resource.ownEvent && resource.ownEvent.map((event) => {
       return (<div key={event.id}><EventCard data={event} onClose={fetchData.bind(null, filter)} /></div>)
     })}
   <Box sx={{ flexGrow: 1, height:55 }} />
-  <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+  {canView && <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
         <BottomNavigation
           showLabels
           value={filter}
@@ -130,7 +153,7 @@ const ResourceAgenda = () => {
           <BottomNavigationAction label="Today" value={"today"} style={{backgroundColor:filter=='today'?"#CCC":"#FFF"}} icon={<ArchiveIcon />} />
           <BottomNavigationAction label="This week" value={"week"} style={{backgroundColor:filter=='week'?"#CCC":"#FFF"}} icon={<ArchiveIcon />} />
         </BottomNavigation>
-      </Paper>
+      </Paper>}
 
 </Container> 
 )};

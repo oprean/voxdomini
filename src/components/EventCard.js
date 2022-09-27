@@ -27,7 +27,7 @@ const EventCard = (props) => {
     //console.log(props);
 
     function handleEditEvent() {
-        dispatch({
+      canEdit && dispatch({
             type:'init.dialog',
             payload: {
               dialog: {
