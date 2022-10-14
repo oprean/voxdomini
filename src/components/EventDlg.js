@@ -72,12 +72,11 @@ export default function FullScreenDialog(props) {
         event.description = event.description===null?'':event.description;
 //      event.participants = [];
     } else if (props.data.title) { // duplicate
-      console.log('dddd');
       initialFValues.resourceId = state.dialog.data.resourceId
       initialFValues.start = moment(props.data.start);
       initialFValues.end = moment(props.data.end);
       event = initialFValues;
-      event.title = props.data.title===null?'':props.data.title + ' [duplicate]';
+      event.title = props.data.title===null?'':props.data.title;
       event.groupId = props.data.groupId===null?0:props.data.groupId;
       event.type = props.data.type===null?0:props.data.type;
       event.description = props.data.description===null?'':props.data.description;

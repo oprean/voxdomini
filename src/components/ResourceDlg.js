@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import QRCard from "../components/QRCard";
 import { Grid, } from '@mui/material';
 import moment from 'moment';
 import IconButton from '@mui/material/IconButton';
@@ -24,6 +25,7 @@ let initialFValues = {
   id: 0,
   name: '',
   description:'',
+  permlink: '',
   groupOnly: false,
   parentId: 0
 }
@@ -46,6 +48,7 @@ export default function FullScreenDialog(props) {
       console.log(resource);
       resource.description = resource.description===null?'':resource.description;
       resource.name = resource.name===null?'':resource.name;
+      resource.permlink = resource.permlink===null?resource.id:resource.permlink;
       resource.parentId = resource.parentId===null?0:resource.parentId;
       resource.groupOnly = resource.groupOnly!=='1'?false:resource.groupOnly;
     } else {
@@ -102,7 +105,9 @@ export default function FullScreenDialog(props) {
   
 
     const handleSubmit = e => {
-        e.preventDefault()
+        e.preventDefault();
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
         if (validate()){
             saveData(values);
         }
@@ -158,6 +163,14 @@ export default function FullScreenDialog(props) {
                         error={errors.description}
                     />
 
+                    <Controls.Textarea
+                        name="permlink"
+                        label="Permlink"
+                        value={values.permlink}
+                        onChange={handleInputChange}
+                        error={errors.permlink}
+                    />
+
                     <Controls.Select
                         name="parentId"
                         label="Parent"
@@ -173,6 +186,11 @@ export default function FullScreenDialog(props) {
                         value={values.groupOnly}
                         onChange={handleInputChange}
                     />
+                    <br/>
+                    <QRCard content={values}/>
+                    <div>Current header image</div>
+                    <img style={{marginTop: 10, marginBottom: 10}} width={"500px"} src={'resources/'+ props.data.id + '.jpg'} />
+                    <Controls.ImageUpload data={values} />
                 </Grid>
             </Grid>
         </Form>

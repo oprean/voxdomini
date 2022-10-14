@@ -6,6 +6,7 @@ import Checkbox from "./Checkbox";
 import DatePicker from "./DatePicker";
 import UserInput from "./UsersInput";
 import Button from "./Button";
+import ImageUpload from "./File";
 
 const Controls = {
     Input,
@@ -15,7 +16,8 @@ const Controls = {
     Checkbox,
     DatePicker,
     UserInput,
-    Button
+    Button,
+    ImageUpload
 
 }
 

@@ -1,6 +1,7 @@
 <?php
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Http\UploadedFile;
 
 $app->get('/resources[/{filter}]', function (Request $request, Response $response, $args) {
   R::useExportCase('camel');
@@ -29,7 +30,7 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
   $filter = $request->getAttribute('filter');
   $resources = [];
   R::useExportCase('camel');
-  $resource = R::findOne(RESOURCE_BEAN, 'id=?',[$id]);
+  $resource = R::findOne(RESOURCE_BEAN, 'id = ? or permlink = ?',[$id, $id]);
   $cond = '';
   switch ($filter) {
     case 'today':
@@ -47,7 +48,7 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
         break;
     case 'none':
         $cond = "1=2";
-        $resources = R::getAll('SELECT id, name as title from '.RESOURCE_BEAN);
+        $resources = R::getAll('SELECT id, name as title from '.RESOURCE_BEAN.' order by name');
         break;
 
     default:
@@ -95,11 +96,23 @@ $app->put('/resource', function (Request $request, Response $response, $args) {
   $resource = R::findOne(RESOURCE_BEAN, ' id = ?', [$body->id]);
   $resource->name = $body->name;
   $resource->description = $body->description;
+  $resource->permlink = $body->permlink;
   $resource->groupOnly = $body->groupOnly;
   $resource->parentId = $body->parentId;
 
   $id = R::store( $resource );
 
+  $response->getBody()->write('ok');
+  return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/upload', function (Request $request, Response $response, $args) {
+  $uploadedFiles = $request->getUploadedFiles();
+  $uploadedFile = $uploadedFiles['file'];
+  $post = (Object)$request->getParsedBody();
+  $filename = PUBLIC_PATH.DS.'resources'.DS.$post->id.'.jpg';
+  //$uploadedFile->moveTo($filename);
+  file_put_contents($filename, $uploadedFile->getStream());
   $response->getBody()->write('ok');
   return $response->withHeader('Content-Type', 'application/json');
 });

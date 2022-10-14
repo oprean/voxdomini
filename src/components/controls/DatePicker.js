@@ -15,7 +15,7 @@ export default function DatePicker(props) {
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DateTimePicker variant="inline" inputVariant="standard"
+            <DateTimePicker inputVariant="standard"
                 {...props}
                 label={label}
                 fullWidth

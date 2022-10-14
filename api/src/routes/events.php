@@ -36,7 +36,7 @@ $app->get('/event/{id}', function (Request $request, Response $response, $args) 
   $event->participants = R::getAll('select *, (SELECT name FROM user WHERE id = event_user.user_id) as name, 
   (SELECT name FROM role WHERE id = event_user.role_id) as role from '.EVENT_USER_BEAN.' WHERE event_id = ?',[$id]);
   $event = R::exportAll($event);
-  $resources = array_values(R::findAll(RESOURCE_BEAN));
+  $resources = array_values(R::findAll(RESOURCE_BEAN, 'order by name'));
   $resources = R::exportAll($resources);
   $groups = array_values(R::findAll(EVENT_GROUP_BEAN));
   $groups = R::exportAll($groups);
@@ -60,10 +60,10 @@ function getEventUsers($eventId, $bAll = true) {
   if (is_int($eventId)) {
     $event_users = R::getAll('select id, event_id as eventId, user_id as userId, role_id as roleId from '.EVENT_USER_BEAN.' WHERE event_id = ?',[$eventId]);
     $ids = implode(',', array_map(function ($u) { $u = (object)$u; return $u->userId; }, $event_users));
-    $sql = 'SELECT 0 as id, '.$eventId.' as eventId, id as userId, 0 as roleId from user where id not in ('.$ids.')';
+    $sql = 'SELECT 0 as id, '.$eventId.' as eventId, id as userId, 0 as roleId from user where id not in ('.$ids.') order by name';
     $all_users = R::getAll($sql);
   } else {
-    $sql = 'SELECT 0 as id, 0 as eventId, id as userId, 0 as roleId from user';
+    $sql = 'SELECT 0 as id, 0 as eventId, id as userId, 0 as roleId from user order by name';
     $all_users = R::getAll($sql);
   }
 

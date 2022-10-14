@@ -13,7 +13,6 @@ import {API_ROOT_URL} from '../utils/constants'
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import EventCard from '../components/EventCard';
-import QRCard from "../components/QRCard";
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -32,7 +31,6 @@ const ResourceAgenda = () => {
   const [state, dispatch ] = useStateValue();
   const [resource, setResource] = React.useState([]);
   const [filter, setFilter] = React.useState("all");
-  const [toggleQR, setToggleQR] = React.useState(false);
 
   let { id } = useParams();
   let history = useHistory();
@@ -44,7 +42,6 @@ const ResourceAgenda = () => {
   const canEdit = useHasPermissions([PERMISSIONS.EDIT_RESOURCES])
   const canDelete = useHasPermissions([PERMISSIONS.DELETE_RESOURCES])
   const canView = useHasPermissions([PERMISSIONS.READ_EVENTS])
-  const canQR = useHasPermissions([PERMISSIONS.CREATE_QR])
 
   useEffect(() => {
     fetchData(filter);
@@ -96,10 +93,6 @@ const ResourceAgenda = () => {
     fetchData(filter);
   }
 
-  function handleToggleQR() {
-    setToggleQR(!toggleQR)
-  }
-
   return (
 <Container maxWidth="xxl">
      <Card>
@@ -119,8 +112,7 @@ const ResourceAgenda = () => {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActions style={{float:'right'}}>
-      {canQR && <Button onClick={handleToggleQR} variant="text">QR</Button>}        
+      <CardActions style={{float:'right'}}>     
       {canCreate && <Button onClick={handleAddEvent} variant="text">Add event</Button>}
       </CardActions>
     </Card>
@@ -132,8 +124,6 @@ const ResourceAgenda = () => {
       <Typography color="text.primary">{resource.name}</Typography>
       <Typography color="text.primary">{filterHR(filter)}</Typography>
     </Breadcrumbs> }
-
-    {canQR && toggleQR && <QRCard content={qrcode}/>}
 
     {resource.ownEvent && resource.ownEvent.map((event) => {
       return (<div key={event.id}><EventCard data={event} onClose={fetchData.bind(null, filter)} /></div>)
