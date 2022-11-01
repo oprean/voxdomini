@@ -19,8 +19,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-export const getToken = (setTokenFound) => {
-  return getToken(messaging, {vapidKey: 'GENERATED_MESSAGING_KEY'}).then((currentToken) => {
+export const fetchToken = (setTokenFound) => {
+  return getToken(messaging, {vapidKey: 'BEBrJOdhKt8FBU8XkFxhw3mRYE3puvPMtnUyHNHzOyxH56g3zy7IcOOweMZDOKTI62LWaC0HUI6y9Qff9TOkIck'}).then((currentToken) => {
     if (currentToken) {
       console.log('current token for client: ', currentToken);
       setTokenFound(true);
@@ -36,3 +36,10 @@ export const getToken = (setTokenFound) => {
     // catch error while creating client token
   });
 }
+
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+      resolve(payload);
+    });
+});

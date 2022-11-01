@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
+import { Redirect } from "react-router-dom";
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
@@ -31,6 +32,7 @@ const ResourceAgenda = () => {
   const [state, dispatch ] = useStateValue();
   const [resource, setResource] = React.useState([]);
   const [filter, setFilter] = React.useState("all");
+  const [notFound, setNotFound] = React.useState(false);
 
   let { id } = useParams();
   let history = useHistory();
@@ -42,8 +44,7 @@ const ResourceAgenda = () => {
   const canEdit = useHasPermissions([PERMISSIONS.EDIT_RESOURCES])
   const canDelete = useHasPermissions([PERMISSIONS.DELETE_RESOURCES])
   const canView = useHasPermissions([PERMISSIONS.READ_EVENTS])
-
-  useEffect(() => {
+    useEffect(() => {
     fetchData(filter);
   },[]);
 
@@ -52,8 +53,15 @@ const ResourceAgenda = () => {
   // console.log(f);
     f = f === undefined?'all':f;
     if (id) {
-      let response = await axios.get(API_ROOT_URL + 'resource/' + id + '/' + f);
-      setResource(response.data.resource);
+      let response = await axios.get(API_ROOT_URL + 'resource/' + id + '/' + f)
+        .then(response => {
+          setResource(response.data.resource);
+          setNotFound(false);
+        })
+        .catch(response => {
+          setNotFound(true);
+      });
+
     }
   };
   
@@ -94,7 +102,9 @@ const ResourceAgenda = () => {
   }
 
   return (
+    
 <Container maxWidth="xxl">
+    {notFound && <Redirect to={{pathname:"/404",state:history.location.pathname}} />}
      <Card>
      <CardActionArea  onClick={handleClick}>
         <CardMedia

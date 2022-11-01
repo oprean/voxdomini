@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import { useAuth0 } from "@auth0/auth0-react";
 import { Grid, } from '@mui/material';
 import moment from 'moment';
 import IconButton from '@mui/material/IconButton';
@@ -33,6 +34,9 @@ let initialFValues = {
   movable: true,
   startResizable:true,
   endResizable:true,
+  createdbyId:0,
+  assistantId:0,
+  responsibleId:0,
   rrule:'',
   groupId:0,
   participants:[],
@@ -46,9 +50,9 @@ export default function FullScreenDialog(props) {
     resources:[{id:0, title:''}], 
     groups:[{id:0, title:''}], 
     types:[{id:0, title:''}],
-    users:[{name:''}]
+    users:[{name:'',id:''}]
   });
-
+  const {user} = useAuth0();
   const handleClose = () => {
     props.onClose();
     setOpen(false);
@@ -68,9 +72,14 @@ export default function FullScreenDialog(props) {
         event.startResizable = event.startResizable === '1'?true:false;
         event.endResizable = event.endResizable === '1'?true:false;
         event.groupId = event.groupId===null?0:event.groupId;
+
+        event.createdbyId = event.createdbyId===null?0:event.createdbyId;
+        event.responsibleId = event.responsibleId===null?0:event.responsibleId;
+        event.assistantId = event.assistantId===null?0:event.assistantId;
+        
         event.type = event.type===null?0:event.type;
         event.description = event.description===null?'':event.description;
-//      event.participants = [];
+        console.log(event);
     } else if (props.data.title) { // duplicate
       initialFValues.resourceId = state.dialog.data.resourceId
       initialFValues.start = moment(props.data.start);
@@ -80,6 +89,9 @@ export default function FullScreenDialog(props) {
       event.groupId = props.data.groupId===null?0:props.data.groupId;
       event.type = props.data.type===null?0:props.data.type;
       event.description = props.data.description===null?'':props.data.description;
+      event.createdbyId = event.createdbyId===null?0:event.createdbyId;
+      event.responsibleId = event.responsibleId===null?0:event.responsibleId;
+      event.assistantId = event.assistantId===null?0:event.assistantId;
     } else { // new
         initialFValues.resourceId = state.dialog.data.resourceId
         initialFValues.start = moment().add( moment().minute() > 30 && 1 , 'hours').minutes( moment().minute() <= 30 ? 30 : 0);//.format(DATE_FORMAT);
@@ -95,15 +107,7 @@ export default function FullScreenDialog(props) {
       types:response.data.types.map(res => { res.title=res.name; return res}),
       users:response.data.users
     })
-//    console.log(response.data.users);
-//    console.log(data);
   };
-
-  function handleCloseStart() {
-    values.end = moment(values.start).add( 2, 'hours');
-    setValues(values);
-    validate();
-  }
 
   async function saveData(event) {
     if (event.id) {
@@ -111,6 +115,7 @@ export default function FullScreenDialog(props) {
             props.onClose();
         });
     } else {
+        event.createdbyEmail = user.email;
         await axios.post(API_ROOT_URL + 'event', event).then(function (response) {
             props.onClose();
         });
@@ -153,10 +158,15 @@ export default function FullScreenDialog(props) {
         }
     }
 
-//    console.log(data.users);
-    //console.log(values);
-    return (
+    const handleChangeStart = (e) => {
+      handleInputChange(e)
+      values.start = moment(e.target.value);
+      values.end = moment(e.target.value).add( 2, 'hours');
+      setValues(values);
+      validate();
+    }
 
+    return (
       <Dialog
         fullScreen
         open={open}
@@ -201,8 +211,7 @@ export default function FullScreenDialog(props) {
                             name="start"
                             label="Start time"
                             value={values.start}
-                            onClose={handleCloseStart}
-                            onChange={handleInputChange}
+                            onChange={handleChangeStart}
                         /></Grid>
                       <Grid item xs={6}>
                         <Controls.DatePicker
@@ -245,6 +254,23 @@ export default function FullScreenDialog(props) {
                         options={data.types}
                         error={errors.type}
                     /></>}
+                    <Controls.Select 
+                        name="responsibleId"
+                        label="Responsible"
+                        value={values.responsibleId}
+                        options={data.users.map(u => {
+                          u.id = u.userId; 
+                          u.title = u.name; 
+                          return u})}
+                        onChange={handleInputChange}
+                    />
+                    <Controls.Select 
+                        name="assistantId"
+                        label="Assistant"
+                        value={values.assistantId}
+                        options={data.users}
+                        onChange={handleInputChange}
+                    />
                     {true && <><Controls.UserInput 
                         name="participants"
                         label="Participants"
@@ -255,6 +281,7 @@ export default function FullScreenDialog(props) {
                         setval={setValues}
                         onChange={handleMultipleInputChange}
                     /></>}
+
                     {false && <><Controls.Checkbox
                         name="movable"
                         label="Movable"

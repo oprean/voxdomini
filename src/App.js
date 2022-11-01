@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from 'react';
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { StateProvider} from './utils/state';
@@ -11,10 +11,12 @@ import ExternalApi from "./views/ExternalApi";
 import Planner  from "./views/Planner";
 import Calendar  from "./views/Calendar";
 import Resource from "./views/Resource"
+import GenericNotFound from "./views/NotFound"
 import history from "./utils/history";
+//import { Button } from '@mui/material';
 import DlgFactory from "./components/DlgFactory";
 import { useAuth0 } from "@auth0/auth0-react";
-
+//import { fetchToken, onMessageListener } from './utils/firebase';
 // styles
 import "./App.css";
 
@@ -43,6 +45,22 @@ const theme = createTheme({
 // https://github.com/auth0-blog/react-rbac
 const App = () => {
   const { user, isAuthenticated, isLoading, error } = useAuth0();  
+  /*const [show, setShow] = useState(false);
+  const [notification, setNotification] = useState({title: '', body: ''});
+  const [isTokenFound, setTokenFound] = useState(false);
+
+  fetchToken(setTokenFound);
+
+  onMessageListener().then(payload => {
+    setNotification({title: payload.notification.title, body: payload.notification.body})
+    setShow(true);
+    console.log(payload);
+  }).catch(err => console.log('failed: ', err));
+
+  const onShowNotificationClicked = () => {
+    setNotification({title: "Notification", body: "This is a test notification"})
+    setShow(true);
+  }*/
 
   const state = {
     user: user,
@@ -93,7 +111,17 @@ const App = () => {
             <Route path="/planner" component={Planner} />
             <Route path="/resource/:id" component={Resource} />
             <Route path="/calendar" component={Calendar} />
+            <Route path='/404' component={GenericNotFound} />
+            <Route path='*' component={GenericNotFound} />
           </Switch>
+
+          {/*1==2 && <header className="App-header">
+        {isTokenFound && <h1> Notification permission enabled ???? </h1>}
+        {!isTokenFound && <h1> Need notification permission ?? </h1>}
+        <Button onClick={() => onShowNotificationClicked()}>Show Toast</Button>
+  </header>*/}
+
+
       </div>
     </Router>
     <DlgFactory/>

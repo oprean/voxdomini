@@ -2,6 +2,7 @@ import Input from "./Input";
 import Textarea from "./Textarea";
 import RadioGroup from "./RadioGroup";
 import Select from "./Select";
+//import AutoComplete from "./Autocomplete";
 import Checkbox from "./Checkbox";
 import DatePicker from "./DatePicker";
 import UserInput from "./UsersInput";
@@ -13,6 +14,7 @@ const Controls = {
     Textarea,
     RadioGroup,
     Select,
+//    AutoComplete,
     Checkbox,
     DatePicker,
     UserInput,

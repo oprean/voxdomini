@@ -275,10 +275,11 @@ class Basic extends Component{
         let borderWidth = isStart ? '4' : '0';
         let borderColor =  'rgba(0,139,236,1)', backgroundColor = '#80C5F6';
         let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
-        if(!!event.type){
-            borderColor = event.type == 1 ? 'rgba(0,139,236,1)' : (event.type == 3 ? 'rgba(245,60,43,1)' : '#999');
-            backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
-        }
+        const inFuture = moment(event.start).isAfter()
+
+        borderColor = inFuture ? 'rgba(0,139,236,1)' : '#999';
+        backgroundColor = inFuture ? '#80C5F6' : '#D9D9D9';
+
         let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight };
         if(!!agendaMaxEventWidth)
             divStyle = {...divStyle, maxWidth: agendaMaxEventWidth};

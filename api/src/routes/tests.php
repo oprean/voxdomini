@@ -20,6 +20,39 @@ $app->get('/test', function (Request $request, Response $response, $args) {
   return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/qmweb', function (Request $request, Response $response, $args) {
+
+  // save
+  $dir = 'c:\Temp\qbweb\all';
+  $files = scandir($dir);
+  $errors = [];
+  $success = [];
+  foreach($files as $file) {
+    if (!is_file($dir.'\\'.$file)) continue;
+    $path_parts = pathinfo($dir.'\\'.$file);
+    $basename = $path_parts['filename'];
+    $specificFolder = 'c:\Temp\qbweb\prepared\\'.$basename;
+    mkdir($specificFolder);
+    $from = 'c:\Temp\qbweb\all\\'.$file;
+    $to = $specificFolder.'\\'.$file;
+    if (copy($from,$to)) {
+      $success[] = $file;
+    } else {
+      $errors[] = $file;
+    };
+  }
+
+  $data = [
+    'errors' => $errors,
+    'success' => $success
+  ];
+
+  $data = json_encode($data);
+
+  $response->getBody()->write($data);
+  return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/test/init', function (Request $request, Response $response, $args) {
 
   R::wipe(RESOURCE_BEAN);

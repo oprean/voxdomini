@@ -68,6 +68,8 @@ $app->get('/resource/{id}[/{filter}]', function (Request $request, Response $res
 
   if (is_array($data['resource']['ownEvent'])) {
     foreach($data['resource']['ownEvent'] as $i => $ev) {
+      $data['resource']['ownEvent'][$i]['responsible'] = R::findOne(USER_BEAN,'id=?',[$data['resource']['ownEvent'][$i]['responsibleId']]);
+      $data['resource']['ownEvent'][$i]['assistant'] = R::findOne(USER_BEAN,'id=?',[$data['resource']['ownEvent'][$i]['assistantId']]);
       if (array_key_exists('ownEventUser', $data['resource']['ownEvent'][$i])) {
         foreach($data['resource']['ownEvent'][$i]['ownEventUser'] as $j => $eu) {
           $data['resource']['ownEvent'][$i]['ownEventUser'][$j] = 

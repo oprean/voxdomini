@@ -36,6 +36,8 @@ $app->get('/event/{id}', function (Request $request, Response $response, $args) 
   $event->participants = R::getAll('select *, (SELECT name FROM user WHERE id = event_user.user_id) as name, 
   (SELECT name FROM role WHERE id = event_user.role_id) as role from '.EVENT_USER_BEAN.' WHERE event_id = ?',[$id]);
   $event = R::exportAll($event);
+  $event = $event[0];
+  $event['createdby'] = R::getCell('SELECT name from user where id =?', [$event['createdbyId']]);
   $resources = array_values(R::findAll(RESOURCE_BEAN, 'order by name'));
   $resources = R::exportAll($resources);
   $groups = array_values(R::findAll(EVENT_GROUP_BEAN));
@@ -44,7 +46,7 @@ $app->get('/event/{id}', function (Request $request, Response $response, $args) 
   $types = R::exportAll($types);
   $users = getEventUsers($id);
   $data = [
-    'event' => $event[0],
+    'event' => $event,
     'resources' => $resources,
     'groups' => $groups,
     'types' => $types,
@@ -90,6 +92,7 @@ $app->post('/event', function (Request $request, Response $response, $args) {
   $event->start = $body->start;
   $event->end = $body->end;
   $event->resourceId = $body->resourceId;
+  $event->createdbyId =  R::getCell('SELECT id FROM user where email = ?', [$body->createdbyEmail]);
   $event->bgColor = $body->bgColor;
   if (is_array($body->participants)) {
     $ids = implode(',',array_map(function ($u) { $u = (object)$u; return $u->userId; }, $body->participants));
@@ -108,6 +111,7 @@ $app->post('/event', function (Request $request, Response $response, $args) {
 $app->put('/event', function (Request $request, Response $response, $args) {
   $body = $request->getBody()->getContents();
   $body = json_decode($body);
+  
   $event = R::findOne(EVENT_BEAN, ' id = ?', [$body->id]);
   $event->title = $body->title;
   $event->description = $body->description;
@@ -116,6 +120,8 @@ $app->put('/event', function (Request $request, Response $response, $args) {
   $event->resourceId = $body->resourceId;
   $event->bgColor = $body->bgColor;
   $event->groupId = $body->groupId;
+  $event->responsibleId = $body->responsibleId;
+  $event->assistantId = $body->assistantId;
   $event->type = $body->type;
   $event->showPopover = $body->showPopover;
   $event->resizable = $body->resizable;
@@ -123,12 +129,15 @@ $app->put('/event', function (Request $request, Response $response, $args) {
   $event->startResizable = $body->startResizable;
   $event->endResizable = $body->endResizable;
   $event->rrule = $body->rrule;
+  
   if (is_array($body->participants)) {
     $userIDs = join(',',array_map(function ($u) { return $u->userId; }, $body->participants));
     $users = R::findAll(USER_BEAN, 'id in ('.$userIDs.')');
     $event->sharedUserList = $users;
   }
+  
   $id = R::store( $event );
+  
   updateEventUsersRole($body->participants, $id);
   $response->getBody()->write('ok');
 

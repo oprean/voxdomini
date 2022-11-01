@@ -5,6 +5,8 @@ import { Button, Avatar, CardActionArea, CardActions } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
+import ResponsibleIcon from '@mui/icons-material/Person';
+import AssistantIcon from '@mui/icons-material/PersonOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DuplicateIcon from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
@@ -84,7 +86,17 @@ const EventCard = (props) => {
                   ?moment(event.start).format('D MMM YYYY') +' '+ moment(event.start).format('HH:mm') +' - '+ moment(event.end).format('HH:mm')
                   :moment(event.start).format(DATE_FORMAT) +' - '+ moment(event.end).format(DATE_FORMAT)}
                 
-            </Typography>    
+            </Typography>
+            
+            <Typography style={{display: 'flex'}}>
+              {event.responsible && <Typography style={{display: 'flex',alignItems: 'center',flexWrap: 'wrap',}} variant="caption" gutterBottom>
+                <ResponsibleIcon fontSize="small"/> {event.responsible.name}
+              </Typography>}
+              {event.assistant && <Typography style={{display: 'flex',alignItems: 'center',flexWrap: 'wrap',}} variant="caption" gutterBottom>
+                <AssistantIcon fontSize="small"/> {event.assistant.name}
+              </Typography>}
+            </Typography>
+
             {event.ownEventUser && event.ownEventUser.length > 0 && <Typography variant="body1" component="div" style={style.center}>
                 <PeopleIcon fontSize="small"/>       
                 {event.ownEventUser && event.ownEventUser.map((user) => {
