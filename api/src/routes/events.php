@@ -32,11 +32,15 @@ $app->get('/events[/{for}]', function (Request $request, Response $response, $ar
 $app->get('/event/{id}', function (Request $request, Response $response, $args) {
   $id = $request->getAttribute('id');
   R::useExportCase('camel');
-  $event = R::load( EVENT_BEAN, $id );
-  $event->participants = R::getAll('select *, (SELECT name FROM user WHERE id = event_user.user_id) as name, 
-  (SELECT name FROM role WHERE id = event_user.role_id) as role from '.EVENT_USER_BEAN.' WHERE event_id = ?',[$id]);
-  $event = R::exportAll($event);
-  $event = $event[0];
+  if ($id != 'undefined') {
+    $event = R::load( EVENT_BEAN, $id );
+    $event->participants = R::getAll('select *, (SELECT name FROM user WHERE id = event_user.user_id) as name, 
+      (SELECT name FROM role WHERE id = event_user.role_id) as role from '.EVENT_USER_BEAN.' WHERE event_id = ?',[$id]);
+      $event = R::exportAll($event);
+    $event = $event[0];
+  } else {
+    $event = ['createdbyId' => 0];
+  }
   $event['createdby'] = R::getCell('SELECT name from user where id =?', [$event['createdbyId']]);
   $resources = array_values(R::findAll(RESOURCE_BEAN, 'order by name'));
   $resources = R::exportAll($resources);
@@ -92,6 +96,8 @@ $app->post('/event', function (Request $request, Response $response, $args) {
   $event->start = $body->start;
   $event->end = $body->end;
   $event->resourceId = $body->resourceId;
+  $event->responsibleId = $body->responsibleId;
+  $event->assistantId = $body->assistantId;
   $event->createdbyId =  R::getCell('SELECT id FROM user where email = ?', [$body->createdbyEmail]);
   $event->bgColor = $body->bgColor;
   if (is_array($body->participants)) {
