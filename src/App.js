@@ -13,10 +13,10 @@ import Calendar  from "./views/Calendar";
 import Resource from "./views/Resource"
 import GenericNotFound from "./views/NotFound"
 import history from "./utils/history";
-//import { Button } from '@mui/material';
+import { Button } from '@mui/material';
 import DlgFactory from "./components/DlgFactory";
 import { useAuth0 } from "@auth0/auth0-react";
-//import { fetchToken, onMessageListener } from './utils/firebase';
+import { fetchToken, onMessageListener } from './utils/firebase';
 // styles
 import "./App.css";
 
@@ -45,7 +45,7 @@ const theme = createTheme({
 // https://github.com/auth0-blog/react-rbac
 const App = () => {
   const { user, isAuthenticated, isLoading, error } = useAuth0();  
-  /*const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({title: '', body: ''});
   const [isTokenFound, setTokenFound] = useState(false);
 
@@ -60,7 +60,7 @@ const App = () => {
   const onShowNotificationClicked = () => {
     setNotification({title: "Notification", body: "This is a test notification"})
     setShow(true);
-  }*/
+  }
 
   const state = {
     user: user,
@@ -115,11 +115,11 @@ const App = () => {
             <Route path='*' component={GenericNotFound} />
           </Switch>
 
-          {/*1==2 && <header className="App-header">
+          {2==2 && <header className="App-header">
         {isTokenFound && <h1> Notification permission enabled ???? </h1>}
         {!isTokenFound && <h1> Need notification permission ?? </h1>}
         <Button onClick={() => onShowNotificationClicked()}>Show Toast</Button>
-  </header>*/}
+      </header>}
 
 
       </div>

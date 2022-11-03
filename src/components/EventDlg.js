@@ -258,9 +258,11 @@ export default function FullScreenDialog(props) {
                         name="responsibleId"
                         label="Responsible"
                         value={values.responsibleId}
+                        //options={data.users}
                         options={data.users.map(u => {
                           u.id = u.userId; 
                           u.title = u.name; 
+                          u.label = u.name; 
                           return u})}
                         onChange={handleInputChange}
                     />
