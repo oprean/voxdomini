@@ -34,7 +34,9 @@ const ResponsiveAppBar = () => {
 
   let pages = isAuthenticated?[{name:'Planner', url: '/planner'}, {name:'Calendar', url:'/calendar'}]:[];
   if (isAuthenticated && user.nickname === 'sergiu.oprean') {
-    pages.push({name:'Api', url:'/external-api'})
+    pages.push({name:'Api', url:'/external-api'});
+    pages.push({name:'Notifications Center', url:'/notifications'})
+    pages.push({name:'Chat', url:'/chat'})
   }
   //console.log(user.name);
   

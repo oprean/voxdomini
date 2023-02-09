@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { useAuth0 } from "@auth0/auth0-react";
 import { Grid, } from '@mui/material';
 import moment from 'moment';
 import IconButton from '@mui/material/IconButton';
@@ -52,7 +51,7 @@ export default function FullScreenDialog(props) {
     types:[{id:0, title:''}],
     users:[{name:'',id:''}]
   });
-  const {user} = useAuth0();
+
   const handleClose = () => {
     props.onClose();
     setOpen(false);
@@ -72,7 +71,6 @@ export default function FullScreenDialog(props) {
         event.startResizable = event.startResizable === '1'?true:false;
         event.endResizable = event.endResizable === '1'?true:false;
         event.groupId = event.groupId===null?0:event.groupId;
-
         event.createdbyId = event.createdbyId===null?0:event.createdbyId;
         event.responsibleId = event.responsibleId===null?0:event.responsibleId;
         event.assistantId = event.assistantId===null?0:event.assistantId;
@@ -94,6 +92,8 @@ export default function FullScreenDialog(props) {
       event.assistantId = event.assistantId===null?0:event.assistantId;
     } else { // new
         initialFValues.resourceId = state.dialog.data.resourceId
+        initialFValues.responsibleId = state.user.profile.id;
+        initialFValues.createdbyId = state.user.profile.id;
         initialFValues.start = moment().add( moment().minute() > 30 && 1 , 'hours').minutes( moment().minute() <= 30 ? 30 : 0);//.format(DATE_FORMAT);
         initialFValues.end = moment().add( moment().minute() > 30 && 2 , 'hours').minutes( moment().minute() <= 30 ? 30 : 0);//.format(DATE_FORMAT);
         event = initialFValues;
@@ -115,7 +115,6 @@ export default function FullScreenDialog(props) {
             props.onClose();
         });
     } else {
-        event.createdbyEmail = user.email;
         await axios.post(API_ROOT_URL + 'event', event).then(function (response) {
             props.onClose();
         });

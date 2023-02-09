@@ -3,10 +3,10 @@ import { TextField } from '@mui/material';
 
 export default function Input(props) {
 
-    const { name, label, value,error=null, onChange } = props;
+    const { name, label, value,error=null, onChange, variant } = props;
     return (
         <TextField
-            variant="standard"
+            variant={variant||"standard"}
             label={label}
             name={name}
             value={value}
