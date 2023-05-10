@@ -40,10 +40,10 @@ const ResourceAgenda = () => {
     url:"https://voxdomini.bitalb.ro/resource/" + id,
     text: resource.name
 }
-  const canCreate = useHasPermissions([PERMISSIONS.CREATE_EVENTS])
-  const canEdit = useHasPermissions([PERMISSIONS.EDIT_RESOURCES])
-  const canDelete = useHasPermissions([PERMISSIONS.DELETE_RESOURCES])
-  const canView = useHasPermissions([PERMISSIONS.READ_EVENTS])
+  const canCreate = useHasPermissions(PERMISSIONS.CREATE_EVENTS)
+  const canEdit = useHasPermissions(PERMISSIONS.EDIT_RESOURCES)
+  const canDelete = useHasPermissions(PERMISSIONS.DELETE_RESOURCES)
+  const canView = useHasPermissions(PERMISSIONS.READ_EVENTS)
     useEffect(() => {
     fetchData(filter);
   },[]);
@@ -111,7 +111,7 @@ const ResourceAgenda = () => {
           component="img"
           height="40"
           image={'/resources/' + resource.id + '.jpg'}
-          alt="green iguana"
+          alt={resource.name}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">

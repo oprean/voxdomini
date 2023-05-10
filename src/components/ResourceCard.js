@@ -17,8 +17,8 @@ import { useHasPermissions } from "../hooks/useHasPermissions";
 export default function ResourceCard(props) {
   const [state, dispatch ] = useStateValue();
 
-  const canEdit = useHasPermissions([PERMISSIONS.EDIT_RESOURCES])
-  const canDelete = useHasPermissions([PERMISSIONS.DELETE_RESOURCES])
+  const canEdit = useHasPermissions(PERMISSIONS.EDIT_RESOURCES)
+  const canDelete = useHasPermissions(PERMISSIONS.DELETE_RESOURCES)
 
   const resource = props.data;
   let history = useHistory();
@@ -30,7 +30,7 @@ export default function ResourceCard(props) {
 
   function getEventCnt() {
     let cnt = 0;
-    var today = moment();
+    var today = moment().startOf('day');
     if (Array.isArray(resource.ownEvent)) {
       resource.ownEvent.map(event => {
         if (moment(event.start).isAfter(today)) cnt++;
@@ -61,7 +61,7 @@ export default function ResourceCard(props) {
           component="img"
           height="140"
           image={'/resources/' + resource.id + '.jpg'}
-          alt="green iguana"
+          alt={resource.name} 
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">

@@ -21,12 +21,12 @@ import {PERMISSIONS} from '../utils/permissions';
 import { useHasPermissions } from "../hooks/useHasPermissions";
 
 const EventCard = (props) => { 
-    const [state, dispatch ] = useStateValue();
-    const canEdit = useHasPermissions([PERMISSIONS.EDIT_EVENTS])
-    const canDelete = useHasPermissions([PERMISSIONS.DELETE_EVENTS])
-    const canCreate = useHasPermissions([PERMISSIONS.CREATE_EVENTS])
     const event = props.data;
-    //console.log(props);
+    const [state, dispatch ] = useStateValue();
+    const canEdit = useHasPermissions(PERMISSIONS.EDIT_EVENTS, {event})
+    const canDelete = useHasPermissions(PERMISSIONS.DELETE_EVENTS, {event})
+    const canCreate = useHasPermissions(PERMISSIONS.CREATE_EVENTS)
+    //console.log(props.data);
 
     function handleEditEvent() {
       canEdit && dispatch({
