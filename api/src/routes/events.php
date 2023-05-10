@@ -98,7 +98,7 @@ $app->post('/event', function (Request $request, Response $response, $args) {
   $event->resourceId = $body->resourceId;
   $event->responsibleId = $body->responsibleId;
   $event->assistantId = $body->assistantId;
-  $event->createdbyId =  R::getCell('SELECT id FROM user where email = ?', [$body->createdbyEmail]);
+  $event->createdbyId = $body->createdbyId;
   $event->bgColor = $body->bgColor;
   if (is_array($body->participants)) {
     $ids = implode(',',array_map(function ($u) { $u = (object)$u; return $u->userId; }, $body->participants));

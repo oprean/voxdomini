@@ -12,6 +12,8 @@ import Controls from "./controls/Controls";
 import { useForm, Form } from './useForm';
 import {API_ROOT_URL} from '../utils/constants'
 import axios from 'axios';
+import {PERMISSIONS} from '../utils/permissions';
+import { useHasPermissions } from "../hooks/useHasPermissions";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,7 +39,7 @@ let initialFValues = {
 export default function FullScreenDialog(props) {
   const [open, setOpen] = React.useState(props.open);
   const [data, setData] = React.useState({resources:[{id:0, title:''}], groups:[{id:0, title:''}], types:[{id:0, title:''}], users:[{name:''}]});
-
+  
   function handleClose() {
     props.closeHandler();
     setOpen(false);
@@ -106,6 +108,9 @@ const handleSubmit = e => {
         saveData(values);
     }
 }
+
+  const canEdit = useHasPermissions(PERMISSIONS.EDIT_EVENTS, {event:values})
+
   return (
 
       <Dialog
@@ -127,12 +132,12 @@ const handleSubmit = e => {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {values.title}
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleSubmit}>
+            {canEdit && <Button autoFocus color="inherit" onClick={handleSubmit}>
               save
-            </Button>
-            <Button color="inherit" onClick={resetForm}>
+            </Button>}
+            {canEdit && <Button color="inherit" onClick={resetForm}>
               reset
-            </Button>
+            </Button>}
           </Toolbar>
         </AppBar>
 

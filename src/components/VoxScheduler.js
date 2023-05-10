@@ -6,13 +6,13 @@ import moment from 'moment'
 import 'antd/lib/style/index.less';
 import Scheduler, {SchedulerData, ViewTypes, DATE_FORMAT} from 'react-big-scheduler';
 import EventForm from './EventForm';
-import EventDlg from './EventDlg';
 import DemoData from '../data/DemoData';
 import 'react-big-scheduler/lib/css/style.css'
 import withDragDropContext from './withDnDContext';
 import axios from 'axios';
 import {API_ROOT_URL} from '../utils/constants'
-
+import {PERMISSIONS} from '../utils/permissions';
+import { withPerms } from '../hooks/withPerms';
 class Basic extends Component{
     constructor(props){
         super(props);
@@ -163,8 +163,27 @@ class Basic extends Component{
         })
     }
 
+    hasParm = (permissionName, obj) => {
+        const permissions = this.props.perms.user["https://auth0.api.users.bitalb.ro/permissions"];
+        const user = this.props.perms.user;
+        if (!permissions) return false
+        let objType = undefined;
+        if (obj !== null) {
+            objType = Object.keys(obj)[0];
+            obj = obj[objType];
+        }
+
+        if (permissions.includes?.(permissionName)) {
+            switch (objType) {
+              case 'event':
+                return user.profile.id == obj.createdbyId || user.profile.id == obj.assistantId || user.profile.id == obj.responsibleId      
+              default:
+                return true;
+            }
+          } else return false
+    }
+
     eventClicked = (schedulerData, event) => {
-        //alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
         this.setState({...{open:true, selectedId:event.id}});
     };
 
@@ -175,24 +194,33 @@ class Basic extends Component{
     }
 
     eventDelete = (schedulerData, event) => {
-        //alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
-        if(window.confirm(`Do you want to delete the event? {eventId: ${event.id}, eventTitle: ${event.title}`)) {
-            let _this = this
-            axios.delete(API_ROOT_URL + 'event/'+ event.id).then(function (response) {
-                if (response.data == 'ok') {
-                    axios(API_ROOT_URL + 'events').then(function (response) {
-                        schedulerData.setEvents(response.data.events);
-                        _this.setState({
-                        viewModel: schedulerData
-                        })
-                    });       
-                }                
-            });
+        const canDelete = this.hasParm(PERMISSIONS.DELETE_EVENTS, {event});
+        if (canDelete) {
+            if(window.confirm(`Do you want to delete the event? {eventId: ${event.id}, eventTitle: ${event.title}`)) {
+                let _this = this
+                axios.delete(API_ROOT_URL + 'event/'+ event.id).then(function (response) {
+                    if (response.data == 'ok') {
+                        axios(API_ROOT_URL + 'events').then(function (response) {
+                            schedulerData.setEvents(response.data.events);
+                            _this.setState({
+                            viewModel: schedulerData
+                            })
+                        });       
+                    }                
+                });
+            }
+        } else {
+            window.alert("You do not have the permission to delete this event!");
         }
     };
 
     eventEdit = (schedulerData, event) => {
-        this.setState({...{open:true, selectedId:event.id}});
+        const canEdit = this.hasParm(PERMISSIONS.EDIT_EVENTS, {event});
+        if (canEdit) {
+            this.setState({...{open:true, selectedId:event.id}});
+        } else {
+            window.alert("You do not have the permission to edit this event!");
+        }
     };
 
     newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
@@ -330,4 +358,4 @@ class Basic extends Component{
     }
 }
 
-export default withDragDropContext(Basic)
+export default withDragDropContext(withPerms(Basic))

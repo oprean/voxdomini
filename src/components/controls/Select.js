@@ -4,7 +4,8 @@ import { FormControl, InputLabel, Select as MuiSelect, MenuItem, FormHelperText 
 export default function Select(props) {
 
     const { name, label, value,error=null, onChange, options } = props;
-
+    let val = (options.find(o => o.id == value)!==undefined)?value:''
+    
     return (
         <FormControl fullWidth variant="standard"
         {...(error && {error:true})}>
@@ -12,12 +13,13 @@ export default function Select(props) {
             <MuiSelect
                 label={label}
                 name={name}
-                value={value}
+                defaultValue={''}
+                value={val}
                 onChange={onChange}>
                 <MenuItem value="">None</MenuItem>
                 {
                     options.map(
-                        item => (<MenuItem key={item.id} value={item.id}>{item.title}</MenuItem>)
+                        item => (<MenuItem key={item.id?item.id:''} value={item.id}>{item.title}</MenuItem>)
                     )
                 }
             </MuiSelect>

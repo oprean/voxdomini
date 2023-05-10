@@ -10,13 +10,13 @@ import Profile from "./views/Profile";
 import ExternalApi from "./views/ExternalApi";
 import Planner  from "./views/Planner";
 import Calendar  from "./views/Calendar";
+import Notifications  from "./views/PushNotificationDemo";
+import Chat  from "./views/ChatDemo";
 import Resource from "./views/Resource"
 import GenericNotFound from "./views/NotFound"
 import history from "./utils/history";
-//import { Button } from '@mui/material';
 import DlgFactory from "./components/DlgFactory";
 import { useAuth0 } from "@auth0/auth0-react";
-//import { fetchToken, onMessageListener } from './utils/firebase';
 // styles
 import "./App.css";
 
@@ -45,23 +45,12 @@ const theme = createTheme({
 // https://github.com/auth0-blog/react-rbac
 const App = () => {
   const { user, isAuthenticated, isLoading, error } = useAuth0();  
-  /*const [show, setShow] = useState(false);
-  const [notification, setNotification] = useState({title: '', body: ''});
-  const [isTokenFound, setTokenFound] = useState(false);
-
-  fetchToken(setTokenFound);
-
-  onMessageListener().then(payload => {
-    setNotification({title: payload.notification.title, body: payload.notification.body})
-    setShow(true);
-    console.log(payload);
-  }).catch(err => console.log('failed: ', err));
-
-  const onShowNotificationClicked = () => {
-    setNotification({title: "Notification", body: "This is a test notification"})
-    setShow(true);
-  }*/
-
+  const [show, setShow] = useState(false);
+    
+  if (user !==undefined) {
+    user.profile = user['https://auth0.api.users.bitalb.ro/profile'];
+  }
+  
   const state = {
     user: user,
     dialog:{
@@ -108,20 +97,14 @@ const App = () => {
             </Route>
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />
+            <Route path="/notifications" component={Notifications} />
+            <Route path="/chat" component={Chat}/>
             <Route path="/planner" component={Planner} />
             <Route path="/resource/:id" component={Resource} />
             <Route path="/calendar" component={Calendar} />
             <Route path='/404' component={GenericNotFound} />
             <Route path='*' component={GenericNotFound} />
           </Switch>
-
-          {/*1==2 && <header className="App-header">
-        {isTokenFound && <h1> Notification permission enabled ???? </h1>}
-        {!isTokenFound && <h1> Need notification permission ?? </h1>}
-        <Button onClick={() => onShowNotificationClicked()}>Show Toast</Button>
-  </header>*/}
-
-
       </div>
     </Router>
     <DlgFactory/>
