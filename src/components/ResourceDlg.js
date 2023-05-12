@@ -33,7 +33,10 @@ let initialFValues = {
 export default function FullScreenDialog(props) {
   const [state, dispatch ] = useStateValue();
   const [open, setOpen] = React.useState(props.open);
-  const [data, setData] = React.useState({resources:[{id:0, title:''}]});
+  const [data, setData] = React.useState({
+    resources:[{id:0, title:''}],
+    types:[{id:0, title:'public'}, {id:1, title:'privat'}]
+  });
 
   const handleClose = () => {
     props.onClose();
@@ -57,7 +60,7 @@ export default function FullScreenDialog(props) {
 
     setValues(resource);
 
-    setData({
+    setData(...{
       resources:response.data.resources 
     })
 
@@ -179,6 +182,16 @@ export default function FullScreenDialog(props) {
                         options={data.resources}
                         error={errors.parentId}
                     />
+
+                    <Controls.Select
+                        name="type"
+                        label="Type"
+                        value={values.type}
+                        onChange={handleInputChange}
+                        options={data.types}
+                        error={errors.type}
+                    />
+
                     <br/>
                     <Controls.Checkbox
                         name="groupOnly"

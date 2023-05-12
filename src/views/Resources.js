@@ -10,18 +10,22 @@ import axios from 'axios';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import { useAuth0 } from "@auth0/auth0-react";
 import Paper from '@mui/material/Paper';
 
 const Resources = (props) => { 
   const [resources, setResources] = React.useState([]);
   const [groups, setGroups] = React.useState([]);
   const [filter, setFilter] = React.useState(0);
+  const {user} = useAuth0();
   useEffect(() => {
     fetchData();
     },[]);
 
   async function fetchData(f) {
+    const type = (user === undefined)?'0':'1';
     f = f === undefined?'0':f;
+    f += '/'+type
     let response = await axios.get(API_ROOT_URL + 'resources/'+ f);
     setResources(response.data.resources);
     setGroups(response.data.groups);

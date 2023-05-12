@@ -3,14 +3,15 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Http\UploadedFile;
 
-$app->get('/resources[/{filter}]', function (Request $request, Response $response, $args) {
+$app->get('/resources/{filter}/{type}', function (Request $request, Response $response, $args) {
   R::useExportCase('camel');
   $filter = $request->getAttribute('filter');
+  $type = $request->getAttribute('type');
   $order = "ifnull((select min(start) from ".EVENT_BEAN." where resource_id = ".RESOURCE_BEAN.".id and start > date('now')),date('now', '+100 year')) asc, name asc";
   if (empty($filter)) {
-    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 ORDER BY '.$order));
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND type = '.$type.' ORDER BY '.$order));
   } else {
-    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND parent_id = ? ORDER BY '.$order, [$filter]));
+    $resources = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 0 AND parent_id = ? AND type = '.$type.' ORDER BY '.$order, [$filter]));
   }
   $resources = R::exportAll($resources);
   $groups = array_values(R::findAll(RESOURCE_BEAN, 'WHERE group_only = 1 ORDER BY name asc'));
@@ -101,6 +102,7 @@ $app->put('/resource', function (Request $request, Response $response, $args) {
   $resource->permlink = $body->permlink;
   $resource->groupOnly = $body->groupOnly;
   $resource->parentId = $body->parentId;
+  $resource->type = $body->type;
 
   $id = R::store( $resource );
 

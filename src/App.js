@@ -93,7 +93,9 @@ const App = () => {
           </Box>
           <Switch>
             <Route path="/" exact>
-              {isAuthenticated ? <Redirect to="/planner" /> : <Home />}
+              {//isAuthenticated ? <Redirect to="/planner" /> : <Home />
+                <Redirect to="/planner" />
+              }
             </Route>
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />

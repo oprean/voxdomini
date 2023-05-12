@@ -16,7 +16,7 @@ function Planner() {
   </Fragment>
 )};
 
-//export default Planner;
-export default withAuthenticationRequired(Planner, {
+export default Planner;
+/*export default withAuthenticationRequired(Planner, {
   onRedirecting: () => <Loading />,
-});
+});*/
