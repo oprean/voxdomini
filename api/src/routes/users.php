@@ -2,6 +2,14 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+$app->get('/auth/token', function (Request $request, Response $response, $args) {
+    //$response->getBody()->write(json_encode(__DIR__));
+    $token = file_get_contents(__DIR__.DS.'..'.DS.'..'.DS.'data'.DS.'token.txt');
+    $response->getBody()->write(json_encode($token));
+    return $response->withHeader('Content-Type', 'application/json');
+
+});
+
 $app->get('/user/{id}', function (Request $request, Response $response, $args) {
     $id = $request->getAttribute('id');
     R::useExportCase('camel');
